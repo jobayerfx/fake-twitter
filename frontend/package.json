@@ -1,0 +1,47 @@
+{
+  "name": "fake-twitter",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "node ./node_modules/nuxt/bin/nuxt.js -H=0.0.0.0 -p=3001",
+    "build": "node --openssl-legacy-provider ./node_modules/nuxt/bin/nuxt.js build",
+    "start": "node --openssl-legacy-provider ./node_modules/nuxt/bin/nuxt.js start",
+    "generate": "node --openssl-legacy-provider ./node_modules/nuxt/bin/nuxt.js generate",
+    "lint": "eslint --ext \".js,.vue\" --ignore-path .gitignore .",
+    "format": "prettier --check .",
+    "test": "npm run lint && npm run format",
+    "fix": "prettier --write --list-different . && npm run lint -- --fix"
+  },
+  "dependencies": {
+    "@nuxtjs/auth-next": "5.0.0-1624817847.21691f1",
+    "@nuxtjs/axios": "^5.13.6",
+    "@nuxtjs/dotenv": "^1.4.1",
+    "@nuxtjs/i18n": "^7.2.0",
+    "moment-timezone": "^0.5.34",
+    "nuxt": "^2.16.3",
+    "nuxt-i18n": "^6.28.1",
+    "vue": "^2.7.10",
+    "vue-debounce": "^3.0.1",
+    "vue-pincode-input": "^0.4.0",
+    "vue-server-renderer": "^2.7.10",
+    "vue-template-compiler": "^2.7.10",
+    "vue-toastification": "^1.7.14",
+    "vue2-editor": "^2.10.3",
+    "vuetify": "^2.6.12",
+    "vuex": "^3.6.2",
+    "webpack": "^4.46.0"
+  },
+  "devDependencies": {
+    "@babel/eslint-parser": "^7.19.1",
+    "@nuxtjs/eslint-config": "^11.0.0",
+    "@nuxtjs/eslint-module": "^3.1.0",
+    "@nuxtjs/pwa": "^3.3.5",
+    "@nuxtjs/vuetify": "^1.12.3",
+    "eslint": "^8.24.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-nuxt": "^4.0.0",
+    "eslint-plugin-vue": "^9.5.1",
+    "eslint-plugin-vuetify": "^1.1.0",
+    "prettier": "^2.7.1"
+  }
+}
