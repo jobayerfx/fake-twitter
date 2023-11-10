@@ -175,7 +175,9 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\AuthRepositoryServiceProvider::class,
-
+        \App\Providers\TweetRepositoryServiceProvider::class,
+        \App\Providers\FollowerRepositoryServiceProvider::class,
+        \App\Providers\TweetRepositoryServiceProvider::class,
     ],
 
     /*

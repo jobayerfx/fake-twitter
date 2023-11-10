@@ -22,7 +22,9 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->foreignId('current_team_id')->nullable();
-            $table->string('profile_photo_path', 2048)->nullable();
+            $table->string('profile_photo', 2048)->nullable();
+            $table->string('cover_photo', 2048)->nullable();
+            $table->text('bio')->nullable();
             $table->timestamps();
             $table->fullText(['username', 'name']);
         });

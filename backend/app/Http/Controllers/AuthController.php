@@ -3,27 +3,37 @@
 namespace App\Http\Controllers;
 
 use App\Helper\Helper;
+use App\Http\Resources\UserResource;
+use App\Models\User;
+use App\Repositories\FollowerRepositoryInterface;
 use Illuminate\Http\Request;
 use App\Repositories\AuthRepositoryInterface;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
     protected $authRepository;
+    protected $followerRepository;
 
-    public function __construct(AuthRepositoryInterface $authRepository)
+    public function __construct(AuthRepositoryInterface $authRepository, FollowerRepositoryInterface $followerRepository)
     {
         $this->authRepository = $authRepository;
+        $this->followerRepository = $followerRepository;
     }
 
     public function register(Request $request)
     {
-        $validatedData = $request->validate([
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
+            'username' => 'required|string|max:255|unique:users',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6',
+            'password' => 'required|confirmed|min:6',
         ]);
-        $this->authRepository->register($validatedData);
+        if ($validator->fails()) {
+            return Helper::validation_response_with_data(null, $validator->errors()->first(), true);
+        }
+        $this->authRepository->register($request->all());
         return response()->json(['message' => 'Registration successful'], 201);
     }
 
@@ -37,15 +47,60 @@ class AuthController extends Controller
             return Helper::validation_response_with_data(null, $validator->errors()->first(), true);
         }
         $credentials = $request->only('email', 'password');
-        $this->authRepository->login($credentials);
+        return $this->authRepository->login($credentials);
     }
     public function logout()
     {
-        $this->authRepository->logout();
+        try {
+            if (Auth::check()) {
+                auth()->user()->token()->revoke();
+                return Helper::response(null,'Successfully logout', false, 200);
+            }
+            return Helper::response(null,'Something went wrong', true, 401);
+        } catch (\Exception $e) {
+            return Helper::response(null,$e->getMessage(), false, $e->getCode());
+        }
+    }
+
+    public function me()
+    {
+        $user = auth()->user();
+
+        if ($user) {
+            $userData = new UserResource($user);
+            return Helper::response_with_data($userData, false);
+        }
+        return response()->json(['message' => 'User not authenticated', 'error' => true], 401);
     }
     public function refreshToken(Request $request)
     {
-        $this->authRepository->refreshToken($request);
+        $newToken = $this->authRepository->refreshToken($request);
+        return response()->json(['token' => $newToken], 200);
+    }
+    public function updateProfile(Request $request)
+    {
+        $user = $this->authRepository->profileUpdate($request->all());
+
+        return response()->json(['message' => 'Profile updated successfully', 'data' => UserResource::make($user)]);
+    }
+
+    public function following()
+    {
+        $userId = auth()->id();
+        $followingIds = $this->followerRepository->getFollowing($userId);
+
+        $following = UserResource::collection(User::whereIn('id', $followingIds)->get());
+        return Helper::response_with_data($following, false);
+    }
+
+    public function follows()
+    {
+        $userId = auth()->id();
+        $followerIds = $this->followerRepository->getFollowers($userId);
+
+        $followers = UserResource::collection(User::whereIn('id', $followerIds)->get());
+
+        return Helper::response_with_data($followers, false);
     }
 
 }
