@@ -102,9 +102,20 @@ class TweetController extends Controller
      * @param  \App\Models\Tweet  $tweet
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Tweet $tweet)
+    public function update(Request $request, $tweetId)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'content' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return Helper::validation_response_with_data(null, $validator->errors()->first(), true);
+        }
+        $tweet = $this->tweetRepository->updateTweet($tweetId, $request->all());
+        if ($tweet) {
+            return Helper::response_with_data(TweetResource::make($tweet), false);
+        } else {
+            return Helper::response([], 'Tweet not found', true, 404);
+        }
     }
 
     /**
@@ -113,9 +124,16 @@ class TweetController extends Controller
      * @param  \App\Models\Tweet  $tweet
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Tweet $tweet)
+    public function destroy($tweetId)
     {
-        //
+        $tweet = $this->tweetRepository->deleteTweet($tweetId);
+
+        if ($tweet) {
+            // Optionally, you can return a success response or redirect as needed
+            return response()->json(['message' => 'Tweet deleted successfully']);
+        } else {
+            return response()->json(['message' => 'Tweet not found'], 404);
+        }
     }
     public function like($tweetId)
     {

@@ -1,4 +1,4 @@
-# wedsly-admin
+# fake-twitter
 
 ## Build Setup
 

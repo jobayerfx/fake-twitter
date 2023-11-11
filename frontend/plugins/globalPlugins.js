@@ -4,11 +4,11 @@ import validationMixin from '@/mixins/validationMixin'
 
 Vue.mixin({
   data() {},
-  computed: {
-    bp() {
-      return this.$vuetify.breakpoint
-    }
-  },
+  // computed: {
+  //   bp() {
+  //     return this.$vuetify.breakpoint
+  //   }
+  // },
 
   methods: {
     formatTimeZone(date) {

@@ -31,10 +31,34 @@ class TweetRepository implements TweetRepositoryInterface
         return Tweet::create($data);
     }
 
+    public function deleteTweet($tweetId)
+    {
+        $tweet = Tweet::find($tweetId);
+
+        if ($tweet) {
+            // Delete the tweet
+            $tweet->delete();
+        }
+
+        return $tweet;
+    }
+
     public function find($tweetId)
     {
         return Tweet::with('user', 'likes')->find($tweetId);
     }
+    public function updateTweet($tweetId, array $data)
+    {
+        $tweet = Tweet::find($tweetId);
+
+        if ($tweet) {
+            // Update the tweet
+            $tweet->update($data);
+        }
+
+        return $tweet;
+    }
+    
     public function isLikedByUser($userId, $tweetId)
     {
         return Tweet::whereHas('likes', function ($query) use ($userId) {
