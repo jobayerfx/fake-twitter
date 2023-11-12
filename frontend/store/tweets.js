@@ -5,10 +5,10 @@ export const state = () => ({
 })
 export const mutations = {
   FETCH_TWEETS(state, data) {
-    state.tweets = data
+    state.tweets = data.data
   },
   FETCH_STORE_TWEET_DETAILS_BY_ID(state, tweetDetails) {
-    state.tweetDetails = tweetDetails
+    state.tweetDetails = tweetDetails.data
   },
   SWITCH_LIKE(state, { id, action }) {
     const tweet = state.tweets.filter((tweet) => tweet._id === id)[0]
@@ -29,13 +29,21 @@ export const mutations = {
     state.tweets = state.tweets.filter((tweet) => tweet._id !== id)
   }
 }
+export const getters = {
+  tweetsData: (state) => {
+    return state.tweets
+  },
+  tweetDetailsData: (state) => {
+    return state.tweetDetails
+  }
+}
 export const actions = {
   async fetchTweets({ commit }) {
-    const { data } = await TweetApi.getTweets()
+    const { data } = await TweetApi(this.$axios).getTweets()
     commit('FETCH_TWEETS', data)
   },
   async fetchStoreTweetDetailsById({ commit }, id) {
-    const { data } = await TweetApi.getTweetById(id)
+    const { data } = await TweetApi(this.$axios).getTweetById(id)
     commit('FETCH_STORE_TWEET_DETAILS_BY_ID', data)
   },
 
@@ -58,7 +66,7 @@ export const actions = {
       imagesURLs: allURLs
     }
 
-    const { data } = await TweetApi.storeTweet(fd)
+    const { data } = await TweetApi(this.$axios).storeTweet(fd)
     commit('ADD_TWEET', data)
   },
   async updateTweet({ commit }, { text, id }) {

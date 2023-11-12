@@ -11,5 +11,6 @@ interface AuthRepositoryInterface
     public function refreshToken($request);
     public function profileUpdate($data);
     public function uploadPhoto($photo, $folder);
+    public function getUserByUsername($username);
     public function searchUser($search);
 }

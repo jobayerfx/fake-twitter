@@ -6,10 +6,10 @@ export default (axios) => ({
     return axios.post('/auth/register', payload)
   },
   getme: () => {
-    return axios.get('/auth/me')
+    return axios.get('/me')
   },
   logout: () => {
-    return axios.post('/logout')
+    return axios.post('/auth/logout')
   },
   updateProfile: (payload) => {
     return axios.put('/profile/update', payload)
@@ -19,5 +19,11 @@ export default (axios) => ({
   },
   getFollowerUsers: () => {
     return axios.get('/me/followers')
+  },
+  getProfile: (username) => {
+    return axios.get('/profile/' + username)
+  },
+  searchUser: (payload) => {
+    return axios.post('/search', payload)
   }
 })

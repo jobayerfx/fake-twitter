@@ -1,6 +1,6 @@
-export default ({ store, redirect }) => {
-  const TOKEN = store.state.token
-  if (!TOKEN) {
+export default function ({ redirect, store }) {
+  const isAuthenticated = !!store.state.auth.user
+  if (!isAuthenticated) {
     redirect('/')
   }
 }

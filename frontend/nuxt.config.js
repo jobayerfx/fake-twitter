@@ -16,13 +16,19 @@ export default {
 
   css: [],
 
-  plugins: ['@/plugins/axios'],
+  plugins: ['@/plugins/axios', '@/plugins/globalPlugins.js'],
 
   components: true,
 
   buildModules: ['@nuxtjs/vuetify'],
 
-  modules: ['@nuxtjs/axios', 'cookie-universal-nuxt'],
+  modules: [
+    '@nuxtjs/axios',
+    '@nuxtjs/pwa',
+    '@nuxtjs/auth-next',
+    'vue-toastification/nuxt',
+    'cookie-universal-nuxt'
+  ],
 
   axios: {
     baseURL: process.env.API_BASEURL
@@ -52,7 +58,7 @@ export default {
   auth: {
     plugins: ['~/plugins/axios', '~/plugins/auth.js'],
     redirect: {
-      login: '/login',
+      login: '/',
       logout: '/login',
       callback: '/login',
       home: '/home'
@@ -68,13 +74,16 @@ export default {
           autoFetch: true
         },
         endpoints: {
-          login: { url: '/login', method: 'post' },
-          logout: { url: '/logout', method: 'post' },
+          login: { url: '/auth/login', method: 'post' },
+          logout: { url: '/auth/logout', method: 'post' },
           user: { url: '/me', method: 'get' }
         }
       }
     }
   },
 
-  pageTransition: 'fade-transition'
+  pageTransition: 'fade-transition',
+  router: {
+    middleware: ['auth']
+  }
 }

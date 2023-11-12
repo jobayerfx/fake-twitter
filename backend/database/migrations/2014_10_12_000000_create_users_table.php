@@ -25,8 +25,11 @@ class CreateUsersTable extends Migration
             $table->string('profile_photo', 2048)->nullable();
             $table->string('cover_photo', 2048)->nullable();
             $table->text('bio')->nullable();
+            $table->date('dob')->nullable();
+            $table->string('location')->nullable();
+            $table->string('website')->nullable();
             $table->timestamps();
-            $table->fullText(['username', 'name']);
+            $table->fullText(['username', 'name', 'email']);
         });
     }
 

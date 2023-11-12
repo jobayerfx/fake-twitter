@@ -2,13 +2,15 @@
     <v-col cols="12" md="6" class="main-page__right-side">
         <v-row class="mx-12">
             <v-col cols="12" md="5" class="hidden-sm-and-down">
-                <v-text-field background-color="#f5f8fa" filled label="Email, username"></v-text-field>
+                <v-text-field background-color="#f5f8fa" filled label="Email or username"
+                    v-model="loginInfo.email"></v-text-field>
             </v-col>
             <v-col cols="12" md="5" class="hidden-sm-and-down">
-                <v-text-field background-color="#f5f8fa" filled label="Password"></v-text-field>
+                <v-text-field background-color="#f5f8fa" filled label="Password"
+                    v-model="loginInfo.password"></v-text-field>
             </v-col>
             <v-col cols="12" md="2" class="hidden-sm-and-down text-center align-center">
-                <v-btn class="mt-2" rounded outlined color="primary">Login</v-btn>
+                <v-btn class="mt-2" rounded outlined color="primary" :loading="isLoading" @click="userLogin()">Login</v-btn>
             </v-col>
         </v-row>
 
@@ -76,7 +78,6 @@
 
 <script>
 import { mapActions } from 'vuex';
-
 export default {
     name: "MainPageRightSide",
     data() {
@@ -279,6 +280,11 @@ export default {
                 1901,
                 1900,
             ],
+            loginInfo: {
+                email: '',
+                password: ''
+            },
+            isLoggedIn: false
         };
     },
     methods: {
@@ -310,6 +316,26 @@ export default {
                 console.error(err);
             }
         },
+        async userLogin() {
+            console.log('user login');
+            try {
+                this.isLoading = true
+                // if (this.$refs.form.validate()) {
+                const { data } = await this.$auth.loginWith('local', {
+                    data: this.loginInfo
+                })
+                // console.log(data);
+                if (data.error === false) {
+                    return this.$router.push('/home')
+                }
+                // }
+            } catch (err) {
+                console.log(err.response.data.message);
+                // this.$toast.error(err.response.data.message)
+            } finally {
+                this.isLoading = false
+            }
+        }
     },
 };
 </script>

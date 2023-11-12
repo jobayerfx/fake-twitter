@@ -6,12 +6,9 @@
         </v-row>
         <v-footer height="78px">
             <v-row justify="center" no-gutters>
-                <v-hover v-slot="{ hover }">
-                    <v-span v-for="link in footerItems" :key="link" variant="text" class="mx-2 text-subtitle-1"
-                        :class="{ 'text-decoration': hover }">
-                        {{ link }}
-                    </v-span>
-                </v-hover>
+                <span v-for="link in footerItems" :key="link" variant="text" class="mx-2 text-subtitle-1">
+                    {{ link }}
+                </span>
             </v-row>
         </v-footer>
     </div>

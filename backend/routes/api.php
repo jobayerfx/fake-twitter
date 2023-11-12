@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TweetController;
 use App\Http\Controllers\FollowerController;
+use App\Http\Controllers\UserController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -28,7 +29,7 @@ Route::post('/auth/logout',  [AuthController::class, 'logout']);
 // REST API endpoints
 Route::middleware('auth:api')->group(function() {
     // User details
-    Route::get('/auth/me', [AuthController::class, 'me']);
+    Route::get('/me', [AuthController::class, 'me']);
     Route::put('/profile/update', [AuthController::class, 'updateProfile']);
     Route::get('/me/following', [AuthController::class, 'following']);
     Route::get('/me/followers', [AuthController::class, 'follows']);
@@ -44,4 +45,6 @@ Route::middleware('auth:api')->group(function() {
 
     Route::post('/follow/{user}', [FollowerController::class, 'followUser']);
     Route::post('/unfollow/{user}', [FollowerController::class, 'unfollowUser']);
+    Route::post('/search', [UserController::class, 'search']);
+    Route::get('/profile/{username}', [UserController::class, 'profileByUsername']);
 });

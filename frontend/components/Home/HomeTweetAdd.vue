@@ -3,14 +3,15 @@
         <v-container>
             <v-row>
                 <v-avatar class="ml-4 mr-4" size="64">
-                    <v-img :src="account.image"></v-img>
+                    <v-img
+                        :src="$auth.user && $auth.user.profile_photo ? $auth.user.profile_photo : 'https://cdn.vuetifyjs.com/images/john.png'"></v-img>
                 </v-avatar>
-                <v-textarea v-model="tweetText" placeholder="What's happening?" auto-grow rows="1"
+                <v-textarea v-model="tweetText" placeholder="What's happening?!" auto-grow rows="1"
                     row-height="15"></v-textarea>
             </v-row>
             <v-row align="center">
                 <v-file-input v-model="image" color="primary" class="home-tweet-add__avatar-margin" hide-input dense
-                    accept="image/*" prepend-icon="mdi-file-upload"
+                    accept="image/*" prepend-icon="mdi-image-outline"
                     @change="addImageToAllFilesAndToPreviewURLs"></v-file-input>
                 <span v-if="tweetText" class="mr-1 text-caption">
                     {{ 280 - tweetText.length }}
@@ -19,7 +20,7 @@
                     :value="tweetTextProgress"></v-progress-circular>
                 <v-btn class="ml-auto" color="primary" rounded :disabled="tweetText.length > 280 || tweetText.length === 0"
                     :loading="isTweetAddLoading" @click="tryAddTweet">
-                    Твитнуть
+                    Post
                 </v-btn>
             </v-row>
 
@@ -34,7 +35,6 @@
 
 <script>
 import { mapState, mapActions } from 'vuex';
-
 export default {
     name: "HomeTweetAdd",
     data() {
@@ -49,7 +49,7 @@ export default {
         };
     },
     computed: {
-        ...mapState(['account']),
+        // ...mapState(['account']),
         tweetTextProgress() {
             return (this.tweetText.length / 280) * 100;
         },

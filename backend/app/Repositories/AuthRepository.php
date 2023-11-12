@@ -68,10 +68,15 @@ class AuthRepository implements AuthRepositoryInterface
         return $photo->store($folder, 'public');
     }
 
+    public function getUserByUsername($username)
+    {
+        return User::where('username', $username)->first();
+    }
+
     public function searchUser($search) {
         return User::query()
-            ->selectRaw('id, username, name, profile_photo_path, MATCH(username, name) AGAINST(? IN BOOLEAN MODE) as score', [$search])
-            ->whereFullText(['username', 'name'], $search, ['mode' => 'boolean'])
+            ->selectRaw('id, username, name, email, profile_photo, bio ,dob, location, website, MATCH(username, name, email) AGAINST(? IN BOOLEAN MODE) as score', [$search])
+            ->whereFullText(['username', 'name', 'email'], $search, ['mode' => 'boolean'])
             ->orderByDesc('score')
             ->limit(10)
             ->get();

@@ -22,6 +22,9 @@ class UserResource extends JsonResource
             'profile_photo' => $this->profile_photo,
             'cover_photo' => $this->cover_photo,
             'bio' => $this->bio,
+            'dob' => $this->dob,
+            'location' => $this->location,
+            'website' => $this->website,
         ];
     }
 }

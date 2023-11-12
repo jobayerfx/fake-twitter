@@ -16,8 +16,9 @@
 
             <v-list flat>
                 <v-list-item-group>
-                    <LazyHomeTweet v-for="tweet in tweets" :key="tweet._id" :tweet="tweet" @like="trySwitchLike"
-                        @open="openTweet" />
+                    <div v-for="tweet in tweets" :key="tweet.id">
+                        <LazyHomeTweet :tweet="tweet" @like="trySwitchLike" @open="openTweet" />
+                    </div>
                 </v-list-item-group>
             </v-list>
         </div>
@@ -28,7 +29,8 @@
 
 <script>
 import Vue from 'vue';
-import { mapState, mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
+// eslint-disable-next-line max-len
 import BaseVProgressCircular from '../components/Base/BaseVProgressCircular.vue';
 import LazyHomeTweet from '../components/Home/HomeTweet.vue';
 import BaseVSnackbar from '../components/Base/BaseVSnackbar.vue';
@@ -38,23 +40,31 @@ export default Vue.extend({
         return {
             loaded: false,
             snackbarError: false,
-            tweets: [],
+            // tweets: [],
         };
     },
-    async fetch() {
-        await this.fetchAllTweets();
-        const tweets = this.storeTweets.tweets;
-        this.tweets = tweets;
-    },
+    // async fetch() {
+    //     await this.fetchAllTweets();
+    //     const tweets = this.storeTweets.tweets;
+    //     this.tweets = tweets;
+    // },
     computed: {
-        ...mapState({
-            storeTweets: 'tweets',
+        ...mapGetters({
+            tweets: 'tweets/tweetsData',
         }),
     },
     watch: {
-        'storeTweets.tweets'() {
-            this.tweets = this.storeTweets.tweets;
-        },
+        tweetList: {
+            handler(nv, ov) {
+                if (this.tweets && this.tweets.length > 0) {
+                    // do something
+                } else {
+                    this.initialize()
+                }
+            },
+            immediate: true,
+            deep: true
+        }
     },
     mounted() {
         this.loaded = true;
@@ -66,6 +76,18 @@ export default Vue.extend({
             fetchStoreTweetDetailsById: 'tweets/fetchStoreTweetDetailsById',
         }),
 
+        async initialize() {
+            try {
+                this.loading = true
+                await Promise.all([
+                    this.$store.dispatch('tweets/fetchTweets'),
+                ])
+            } catch (e) {
+                this.$toast.error(e.response.data.message)
+            } finally {
+                this.loading = false
+            }
+        },
         async trySwitchLike(id, action) {
             try {
                 const data = {

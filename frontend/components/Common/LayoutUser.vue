@@ -1,27 +1,30 @@
 <template>
     <v-row>
         <v-col>
-            <v-menu offset-y v-model="isMenu">
-                <template v-slot:activator="{ on, attrs }">
-                    <v-list flat>
+            <v-menu v-model="isMenu" offset-y>
+                <template #activator="{ on, attrs }">
+                    <v-list rounded>
                         <v-list-item-group>
-                            <v-list-item v-on="on" v-bind="attrs">
+                            <v-list-item v-bind="attrs" v-on="on">
                                 <v-list-item-avatar>
-                                    <v-img :src="userData?.image"></v-img>
+                                    <v-img :src="$auth.user?.profile_photo"></v-img>
                                 </v-list-item-avatar>
                                 <v-list-item-content>
                                     <v-list-item-title>
-                                        {{ userData?.name }}
+                                        {{ $auth.user?.name }}
                                     </v-list-item-title>
                                     <v-list-item-subtitle>
-                                        @{{ userData?.username }}
+                                        @{{ $auth.user?.username }}
                                     </v-list-item-subtitle>
                                 </v-list-item-content>
+                                <v-btn icon v-bind="attrs" v-on="on">
+                                    <v-icon>mdi-dots-horizontal</v-icon>
+                                </v-btn>
                             </v-list-item>
                         </v-list-item-group>
                     </v-list>
                 </template>
-                <v-list flat>
+                <v-list rounded>
                     <v-list-item-group>
                         <v-list-item @click="exit">
                             <v-list-item-title>Logout</v-list-item-title>
@@ -36,12 +39,6 @@
 <script>
 export default {
     name: "LayoutUser",
-    props: {
-        userData: {
-            type: Object,
-            required: true,
-        },
-    },
     data() {
         return {
             isMenu: false,

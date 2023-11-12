@@ -1,16 +1,17 @@
+<!-- eslint-disable vue/component-definition-name-casing -->
 <template>
     <v-app>
         <v-navigation-drawer width="320" app>
             <v-container class="fill-height">
                 <LayoutNavigation class="mb-auto" />
                 <v-spacer />
-                <LayoutUser class="mt-auto" :user-data="accountStore" @sign-out="signOutFromAccount" />
+                <LayoutUser class="mt-auto" @sign-out="signOutFromAccount" />
             </v-container>
         </v-navigation-drawer>
 
         <v-app-bar height="56" color="white" flat app>
             <span class="font-weight-black text-h6">
-                <v-btn v-if="isTweetDetails" icon color="primary" @click="$router.go(-1)">
+                <v-btn v-if="isTweetDetails()" icon color="primary" @click="$router.go(-1)">
                     <v-icon> mdi-arrow-left </v-icon>
                 </v-btn>
                 {{ title }}
@@ -20,9 +21,10 @@
         <v-main>
             <v-container>
                 <v-row align="center" justify="center">
-                    <v-col cols="12" sm="10" md="8">
+                    <v-col cols="12" sm="10" md="10">
                         <Nuxt />
-                    </v-col></v-row>
+                    </v-col>
+                </v-row>
             </v-container>
         </v-main>
 
@@ -36,44 +38,33 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
-import LayoutNavigation from '../components/Layout/LayoutNavigation';
-import LayoutSearch from '../components/Layout/LayoutSearch.vue';
-import LayoutLastUsers from '../components/Layout/LayoutLastUsers.vue';
-import LayoutUser from '../components/Layout/LayoutUser.vue';
+import { mapActions } from 'vuex';
+import LayoutNavigation from '../components/Common/LayoutNavigation';
+import LayoutSearch from '../components/Common/LayoutSearch.vue';
+import LayoutLastUsers from '../components/Common/LayoutLastUsers.vue';
+import LayoutUser from '../components/Common/LayoutUser.vue';
 export default {
-    name: 'Default',
+    // eslint-disable-next-line vue/component-definition-name-casing
+    name: 'default',
     components: { LayoutNavigation, LayoutUser, LayoutSearch, LayoutLastUsers },
     middleware: ['isAuth'],
-    ...mapState({
-        accountStore: 'account',
-    }),
-    isMobile() {
-        if (
-            this.$vuetify.breakpoint.name === 'xs' ||
-            this.$vuetify.breakpoint.name === 'sm'
-        )
-            return true;
-        return false;
-    },
-    title() {
-        switch (this.$route.path) {
-            case '/home': {
-                return 'Home';
+    // computed: mapState([
+    //     'account'
+    // ]),
+    computed: {
+        title() {
+            switch (this.$route.name) {
+                case 'home': {
+                    return 'Home';
+                }
+                case 'profile-username': {
+                    return 'Profile';
+                }
+                default: {
+                    return 'Tweet';
+                }
             }
-            case '/profile': {
-                return 'Profile';
-            }
-            default: {
-                return 'Tweet';
-            }
-        }
-    },
-    isTweetDetails() {
-        if (this.$route.path.split('/').includes('tweet')) {
-            return true;
-        }
-        return false;
+        },
     },
     methods: {
         ...mapActions({
@@ -90,6 +81,22 @@ export default {
         signOutFromAccount() {
             this.signOut();
             this.$router.push('/');
+        },
+        isMobile() {
+            if (
+                this.$vuetify.breakpoint.name === 'xs' ||
+                this.$vuetify.breakpoint.name === 'sm'
+            )
+                return true;
+            return false;
+        },
+
+        isTweetDetails() {
+            // console.log(this.$route.name);
+            if (this.$route.name === 'home') {
+                return false;
+            }
+            return true;
         },
     },
 };

@@ -3,17 +3,17 @@
         <v-container fluid>
             <v-row>
                 <v-list-item-avatar class="mb-auto" size="64">
-                    <v-img :src="tweet.user.image"></v-img>
+                    <v-img :src="tweet.user.profile_photo"></v-img>
                 </v-list-item-avatar>
 
                 <v-list-item-content>
                     <v-list-item-title class="home-tweet__title">
-                        <span class="home-tweet__title-left-side"><span class="font-weight-bold">{{ tweet.user.fullname
+                        <span class="home-tweet__title-left-side"><span class="font-weight-bold">{{ tweet.user.name
                         }}</span>
                             <span class="secondaryDarkGray--text">@{{ tweet.user.username }}</span>
                             <span class="secondaryDarkGray--text">
-                                —
-                                {{ formatDate(new Date(tweet.createdAt)) }}
+                                ·
+                                {{ timeSince(new Date(tweet.created_at)) }}
                             </span>
                         </span>
                         <HomeTweetMenu :tweet="tweet" :tweetTextUpdate="tweetText" @update-tweet-text="updateTweetText" />
@@ -21,8 +21,7 @@
                     <span>
                         {{ tweetText }}
                     </span>
-                    <v-card v-for="imageURL in tweet.imagesURLs" :key="imageURL" :img="imageURL" height="256"
-                        class="my-2"></v-card>
+                    <v-card v-if="tweet.image" :img="tweet.image" height="256" class="my-2"></v-card>
                 </v-list-item-content>
             </v-row>
 
@@ -49,6 +48,10 @@ export default {
             tweetText: '',
         };
     },
+    mounted() {
+        this.loaded = true;
+        this.tweetText = this.tweet.content;
+    },
     methods: {
         clickComment() {
             console.log('comment');
@@ -70,10 +73,7 @@ export default {
             this.tweetText = text;
         },
     },
-    mounted() {
-        this.loaded = true;
-        this.tweetText = this.tweet.text;
-    },
+
 };
 </script>
 

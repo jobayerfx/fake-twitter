@@ -22,12 +22,23 @@ class UserController extends Controller
         $search = htmlspecialchars($search, ENT_QUOTES, 'UTF-8');
 
         if(!$search) {
-            return Helper::response([], 'No user data found!', false, 200);
+            return Helper::response([], 'No user data found!', false, 404);
         }
         $search .= '*';
 
         $users = $this->authRepository->searchUser($search);
 
         return Helper::response(UserResource::collection($users), 'User filtered data.', false, 200);
+    }
+    public function profileByUsername(Request $request, $username)
+    {
+        // Get user by username from the repository
+        $user = $this->authRepository->getUserByUsername($username);
+
+        if (!$user) {
+            return Helper::response([], 'No user data found!', false, 404);
+        }
+
+        return Helper::response(UserResource::make($user), 'User data', false, 200);
     }
 }

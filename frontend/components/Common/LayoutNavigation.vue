@@ -1,7 +1,7 @@
 <template>
     <v-row>
         <v-col>
-            <v-list rounded nav>
+            <v-list rounded nav class="left-sidebar-menu">
                 <v-list-item-group>
                     <v-list-item disabled>
                         <v-btn icon color="primary">
@@ -56,35 +56,41 @@ export default {
             username: "",
             items: [
                 {
-                    icon: 'mdi-home',
+                    icon: 'mdi-home-variant',
                     title: 'Home',
                     to: '/home',
                 },
                 {
-                    icon: 'mdi-bell',
+                    icon: 'mdi-magnify',
+                    title: 'Explore',
+                    // to: '/explore',
+                },
+                {
+                    icon: 'mdi-bell-outline',
                     title: 'Notifications',
                     // to: '/notifications',
                 },
                 {
-                    icon: 'mdi-message',
+                    icon: 'mdi-email-outline',
                     title: 'Messages',
                     // to: '/messages',
                 },
+
                 {
-                    icon: 'mdi-bookmark',
+                    icon: 'mdi-bookmark-outline',
                     title: 'bookmarks',
                     // to: '/bookmarks',
                 },
                 {
-                    icon: 'mdi-format-list-bulleted',
+                    icon: 'mdi-list-box-outline',
                     title: 'lists',
                     // to: '/lists',
                 },
-                // {
-                //     icon: 'mdi-account',
-                //     title: 'profile',
-                //     to: '/profile/' + this.username,
-                // },
+                {
+                    icon: 'mdi-account-outline',
+                    title: 'Profile',
+                    to: '/profile/' + this.$auth.user.username,
+                },
             ],
         };
     },
@@ -95,7 +101,7 @@ export default {
     },
     initUser() {
         // eslint-disable-next-line max-len
-        this.username = this.$auth.user && this.$auth.user.name ? this.$auth.user.name : 'Loading..'
+        this.username = this.$auth.user && this.$auth.user.username ? this.$auth.user.username : 'Loading..'
     },
     methods: {
         openPage(url) {
@@ -106,3 +112,12 @@ export default {
     },
 };
 </script>
+<style scoped>
+.left-sidebar-menu {
+    padding: 0 5% 0 18%;
+}
+
+.v-list-item.v-list-item--link {
+    margin-bottom: 0 !important;
+}
+</style>
