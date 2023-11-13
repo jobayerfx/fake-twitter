@@ -40,13 +40,17 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'email' => 'required|exists:users,email',
+            'email' => 'required',
             'password' => 'required|min:8',
         ]);
         if ($validator->fails()) {
             return Helper::validation_response_with_data(null, $validator->errors()->first(), true);
         }
-        $credentials = $request->only('email', 'password');
+        $loginType = filter_var($request->input('email'), FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+        $credentials = [
+            $loginType => $request->input('email'),
+            'password' => $request->input('password'),
+        ];
         return $this->authRepository->login($credentials);
     }
     public function logout()
@@ -74,6 +78,9 @@ class AuthController extends Controller
     }
     public function refreshToken(Request $request)
     {
+        if (!Auth::check()) {
+            return Helper::response(null,'Something went wrong', true, 401);
+        }
         $newToken = $this->authRepository->refreshToken($request);
         return response()->json(['token' => $newToken], 200);
     }
@@ -101,6 +108,23 @@ class AuthController extends Controller
         $followers = UserResource::collection(User::whereIn('id', $followerIds)->get());
 
         return Helper::response_with_data($followers, false);
+    }
+
+    public function getFollowByUser($username) {
+
+        $user = $this->authRepository->getUserByUsername($username);
+        if (!$user) {
+            return Helper::response([], 'No user data found!', false, 404);
+        }
+        $followingIds = $this->followerRepository->getFollowing($user->id);
+
+        $following = UserResource::collection(User::whereIn('id', $followingIds)->get());
+
+        $followerIds = $this->followerRepository->getFollowers($user->id);
+
+        $followers = UserResource::collection(User::whereIn('id', $followerIds)->get());
+
+        return Helper::response(['followings' => $following, 'followers' => $followers], 'User Following data', false, 200);
     }
 
 }

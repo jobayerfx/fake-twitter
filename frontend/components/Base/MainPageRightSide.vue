@@ -317,7 +317,7 @@ export default {
             }
         },
         async userLogin() {
-            console.log('user login');
+            // console.log('user login');
             try {
                 this.isLoading = true
                 // if (this.$refs.form.validate()) {

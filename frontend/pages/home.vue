@@ -17,7 +17,7 @@
             <v-list flat>
                 <v-list-item-group>
                     <div v-for="tweet in tweets" :key="tweet.id">
-                        <LazyHomeTweet :tweet="tweet" @like="trySwitchLike" @open="openTweet" />
+                        <LazyHomeTweet :tweet="tweet" @like="trySwitchLike" @open="openTweet" @initialize="initialize" />
                     </div>
                 </v-list-item-group>
             </v-list>
@@ -103,7 +103,7 @@ export default Vue.extend({
         async openTweet(id) {
             try {
                 await this.fetchStoreTweetDetailsById(id);
-                this.$router.push('/tweet/' + id);
+                return this.$router.push('/tweet/' + id);
             } catch (err) {
                 this.snackbarError = true;
                 console.error(err);

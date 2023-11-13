@@ -6,6 +6,7 @@ interface TweetRepositoryInterface
 {
     public function getFollowedUserIds($followerId);
     public function getTweetsForUser($userId, $followedUserIds);
+    public function getTweetsByUser($userId);
     public function createTweet($data);
     public function find($tweetId);
     public function updateTweet($tweetId, array $data);

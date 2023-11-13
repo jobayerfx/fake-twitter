@@ -49,24 +49,23 @@ export const actions = {
 
   async switchLike({ commit }, { id, action }) {
     if (action === 'add') {
-      console.log('add')
+      await TweetApi(this.$axios).likeTweet(id)
     } else {
-      console.log('remove')
+      await TweetApi(this.$axios).unlikeTweet(id)
     }
     // await commit('SWITCH_LIKE', {id, action});
   },
 
   async addTweet({ dispatch, commit, rootState }, tweetData) {
-    const allURLs = await dispatch('uploadImages', tweetData.images, {
-      root: true
-    })
-    const fd = {
-      text: tweetData.text,
-      user: rootState.account._id,
-      imagesURLs: allURLs
-    }
+    // const allURLs = await dispatch('uploadImages', tweetData.images, {
+    //   root: true
+    // })
+    // const fd = {
+    //   content: tweetData.content,
+    //   imagesURLs: allURLs
+    // }
 
-    const { data } = await TweetApi(this.$axios).storeTweet(fd)
+    const { data } = await TweetApi(this.$axios).storeTweet(tweetData)
     commit('ADD_TWEET', data)
   },
   async updateTweet({ commit }, { text, id }) {

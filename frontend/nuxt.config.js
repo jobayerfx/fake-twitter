@@ -31,9 +31,11 @@ export default {
   ],
 
   axios: {
-    baseURL: process.env.API_BASEURL
+    baseURL: process.env.API_BASEURL + 'api/'
   },
-
+  publicRuntimeOptions: {
+    apiBaseURL: process.env.API_BASEURL
+  },
   vuetify: {
     customVariables: ['~/assets/variables.scss'],
     theme: {
@@ -49,7 +51,8 @@ export default {
           warning: colors.amber.base,
           errorPink: '#FBDEE7',
           error: colors.red.darken1,
-          success: colors.green.accent3
+          success: colors.green.accent3,
+          white: '#ffffff'
         }
       }
     }
@@ -59,9 +62,9 @@ export default {
     plugins: ['~/plugins/axios', '~/plugins/auth.js'],
     redirect: {
       login: '/',
-      logout: '/login',
-      callback: '/login',
-      home: '/home'
+      logout: '/',
+      callback: '/',
+      home: '/'
     },
     strategies: {
       local: {

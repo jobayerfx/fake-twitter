@@ -22,6 +22,11 @@ class TweetRepository implements TweetRepositoryInterface
             ->cursorPaginate();
     }
 
+    public function getTweetsByUser($userId)
+    {
+        return Tweet::with('user')->where('user_id', $userId)->cursorPaginate();
+    }
+
     public function createTweet($data)
     {
         if (isset($data['image'])) {

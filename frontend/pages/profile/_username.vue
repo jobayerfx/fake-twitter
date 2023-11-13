@@ -4,20 +4,36 @@
             <BaseVProgressCircular />
         </div>
         <div v-if="isLoaded && accountInfo">
-            <v-row class="pl-4">
-                <v-avatar size="128">
-                    <img :src="accountInfo.profile_photo" alt="avatar" />
-                </v-avatar>
-                <ProfileChangeDialog v-if="$auth.user.username === profileUsername" class="ml-auto" :user-data="accountInfo"
-                    @update-user="tryUpdateUser" />
+            <v-row class="pb-16">
+                <v-card>
+                    <v-img src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg" height="200px" class="woo"
+                        style="overflow: visible">
+                        <v-avatar class="pa-1 avatar-style" size="120" color="white">
+                            <img v-if="accountInfo.profile_photo" width="80" height="80" :src="accountInfo.profile_photo"
+                                alt="avatar">
+                            <v-icon v-else size="120">
+                                mdi-account-circle
+                            </v-icon>
+                        </v-avatar>
+                    </v-img>
+                </v-card>
             </v-row>
             <v-row>
-                <v-col>
+                <v-col cols="8">
                     <div class="text-h5 font-weight-bold">
                         {{ accountInfo?.name }}
                     </div>
                     <div class="subtitle-1 secondaryDarkGray--text">
                         @{{ accountInfo?.username }}
+                    </div>
+                </v-col>
+                <v-col cols="4">
+                    <ProfileChangeDialog v-if="$auth.user.username === profileUsername" class="ml-auto"
+                        :user-data="accountInfo" @update-user="tryUpdateUser" />
+                    <div v-else>
+                        <v-btn v-if="isFollowed()" rounded @click="follow"
+                            class="secondaryDarkGray white-text text-capitalize">Follow</v-btn>
+                        <v-btn v-else rounded @click="unfollow" class="text-capitalize">Unfollow</v-btn>
                     </div>
                 </v-col>
             </v-row>
@@ -52,11 +68,25 @@
                     </div>
                 </v-col>
             </v-row>
+            <v-row>
+                <v-col class="pt-0">
+                    <div class="subtitle-1">
+                        <span class="ml-4 text--white">
+                            <NuxtLink :to="`/following/${accountInfo.username}`"><strong>{{ following.length }}</strong>
+                                Following</NuxtLink>
+                        </span>
+                        <span class="ml-2 white--text">
+                            <NuxtLink :to="`/following/${accountInfo.username}`"><strong>{{ follower.length }}</strong>
+                                Follower</NuxtLink>
+                        </span>
+                    </div>
 
+                </v-col>
+            </v-row>
 
 
             <v-tabs v-model="selectedTab" background-color="transparent" color="primary" grow>
-                <v-tab v-for="tab in tabs" :key="tab">
+                <v-tab v-for="tab in tabs" :key="tab" class="text-capitalize">
                     {{ tab }}
                 </v-tab>
             </v-tabs>
@@ -64,7 +94,7 @@
             <v-tabs-items v-model="selectedTab">
                 <v-tab-item v-for="tab in tabs" :key="tab">
                     <v-card flat>
-                        <v-card-text>{{ tab }}</v-card-text>
+                        <v-card-text class="text-capitalize">{{ tab }}</v-card-text>
                     </v-card>
                 </v-tab-item>
             </v-tabs-items>
@@ -75,6 +105,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex';
+import { FollowApi } from '@/service'
 // eslint-disable-next-line max-len
 import ProfileChangeDialog from '../../components/Profile/ProfileChangeDialog.vue';
 export default {
@@ -83,7 +114,7 @@ export default {
     data() {
         return {
             accountInfo: {},
-            tabs: ['Tweets', 'Tweets and Replies', 'Media', 'Like'],
+            tabs: ['Posts', 'Replies', 'Media', 'Likes'],
             selectedTab: null,
             snackbarError: false,
             isLoaded: false,
@@ -94,8 +125,9 @@ export default {
     computed: {
         ...mapGetters({
             accountStore: 'account/currentUser',
+            follower: 'account/followerUser',
+            following: 'account/followingUser',
         }),
-
         isEmptyWebsite() {
             return this.accountInfo.website === '';
         },
@@ -121,20 +153,27 @@ export default {
     },
     mounted() {
         this.isLoaded = true;
+        this.initialize()
     },
     methods: {
         ...mapActions({
             getMe: 'account/getme',
             getProfile: 'account/getProfileByUsername',
             updateUser: 'account/updateUser',
+            getFollower: 'account/getFollower',
+            getFollowing: 'account/getFollowing'
         }),
         async fetch() {
             // this.profileUsername = this.$route.params.username;
+            // console.log(this.accountInfo);
             try {
-                if (this.profileUsername !== this.accountInfo.username) {
+                if (this.profileUsername !== this.$auth.username) {
                     // eslint-disable-next-line max-len
                     const userInfo = await this.getProfile(this.profileUsername);
                     this.accountInfo = userInfo;
+                } else {
+                    this.getMe();
+                    this.accountInfo = this.accountStore;
                 }
             } catch (err) {
                 this.snackbarError = true;
@@ -144,9 +183,7 @@ export default {
         async tryUpdateUser(data) {
             try {
                 await this.updateUser(data);
-                await Promise.all([
-                    this.$store.dispatch('account/getme'),
-                ])
+                this.fetch();
             } catch (e) {
                 console.error(e);
                 this.snackbarError = true;
@@ -157,6 +194,8 @@ export default {
                 this.loading = true
                 await Promise.all([
                     this.$store.dispatch('account/getme'),
+                    this.$store.dispatch('account/getFollower'),
+                    this.$store.dispatch('account/getFollowing'),
                 ])
             } catch (e) {
                 this.$toast.error(e.response.data.message)
@@ -164,7 +203,44 @@ export default {
                 this.loading = false
             }
         },
+        async follow() {
+            try {
+                this.loading = true
+                // eslint-disable-next-line max-len
+                const { data } = await FollowApi(this.$axios).follow(this.accountInfo.id)
+                this.initialize()
+                this.$toast.success(data.message);
+            } catch (e) {
+                this.$toast.error(e.response.data.message)
+            } finally {
+                this.loading = false
+            }
+        },
+        async unfollow() {
+            try {
+                this.loading = true
+                // eslint-disable-next-line max-len
+                const { data } = await FollowApi(this.$axios).unfollow(this.accountInfo.id)
+                this.initialize()
+                this.$toast.success(data.message);
+            } catch (e) {
+                this.$toast.error(e.response.data.message)
+            } finally {
+                this.loading = false
+            }
+        },
+        isFollowed() {
+            const index = this.following.findIndex((item) => item.username == this.profileUsername)
+            return index === -1
+        }
     },
 
 };
 </script>
+<style scoped>
+.avatar-style {
+    position: absolute;
+    left: 0%;
+    top: 70%
+}
+</style>

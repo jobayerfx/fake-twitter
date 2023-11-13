@@ -7,7 +7,10 @@
                         <v-list-item-group>
                             <v-list-item v-bind="attrs" v-on="on">
                                 <v-list-item-avatar>
-                                    <v-img :src="$auth.user?.profile_photo"></v-img>
+                                    <v-img v-if="$auth.user?.profile_photo" :src="$auth.user?.profile_photo"></v-img>
+                                    <v-icon v-else size="56">
+                                        mdi-account-circle
+                                    </v-icon>
                                 </v-list-item-avatar>
                                 <v-list-item-content>
                                     <v-list-item-title>

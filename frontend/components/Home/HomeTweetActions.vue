@@ -10,7 +10,8 @@
             <span v-show="retweets > 0">{{ retweets }}</span>
         </v-btn>
         <v-btn class="ml-auto" icon :color="isLike ? '#e0245e' : ''" @click.stop="switchLike">
-            <v-icon>mdi-heart-outline</v-icon>
+            <v-icon v-if="isLike">mdi-heart</v-icon>
+            <v-icon v-else>mdi-heart-outline</v-icon>
             <span v-show="likes > 0">{{ likes }}</span>
         </v-btn>
     </v-row>

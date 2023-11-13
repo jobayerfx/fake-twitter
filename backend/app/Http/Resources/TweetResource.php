@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class TweetResource extends JsonResource
 {
@@ -17,7 +18,7 @@ class TweetResource extends JsonResource
         return [
             'id' => $this->id,
             'content' => $this->content,
-            'image' => $this->image,
+            'image' => $this->image ? asset('storage/' .$this->image) : null,
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at' => $this->updated_at->toDateTimeString(),
             'user' => new UserResource($this->whenLoaded('user')),

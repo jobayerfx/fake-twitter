@@ -11,7 +11,7 @@
 
         <v-app-bar height="56" color="white" flat app>
             <span class="font-weight-black text-h6">
-                <v-btn v-if="isTweetDetails()" icon color="primary" @click="$router.go(-1)">
+                <v-btn v-if="isTweetDetails()" icon color="black" @click="$router.go(-1)">
                     <v-icon> mdi-arrow-left </v-icon>
                 </v-btn>
                 {{ title }}
@@ -69,7 +69,6 @@ export default {
     methods: {
         ...mapActions({
             addTweet: 'tweets/addTweet',
-            signOut: 'signOut',
         }),
         onClickTweet(text) {
             try {
@@ -79,8 +78,8 @@ export default {
             }
         },
         signOutFromAccount() {
-            this.signOut();
-            this.$router.push('/');
+            this.$auth.logout();
+            return this.$router.push('/');
         },
         isMobile() {
             if (

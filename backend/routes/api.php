@@ -42,9 +42,11 @@ Route::middleware('auth:api')->group(function() {
     Route::get('/tweets/{tweet_id}', [TweetController::class, 'show']);
     Route::post('/tweets/{tweet_id}/like', [TweetController::class, 'like']);
     Route::delete('/tweets/{tweet_id}/unlike', [TweetController::class, 'unlike']);
+    Route::get('/user-tweets/{username}', [TweetController::class, 'getTweetsByUser']);
 
     Route::post('/follow/{user}', [FollowerController::class, 'followUser']);
     Route::post('/unfollow/{user}', [FollowerController::class, 'unfollowUser']);
     Route::post('/search', [UserController::class, 'search']);
     Route::get('/profile/{username}', [UserController::class, 'profileByUsername']);
+    Route::get('/following-data/{username}', [AuthController::class, 'getFollowByUser']);
 });

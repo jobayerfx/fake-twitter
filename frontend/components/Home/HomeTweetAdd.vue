@@ -3,8 +3,11 @@
         <v-container>
             <v-row>
                 <v-avatar class="ml-4 mr-4" size="64">
-                    <v-img
+                    <v-img v-if="$auth.user.profile_photo"
                         :src="$auth.user && $auth.user.profile_photo ? $auth.user.profile_photo : 'https://cdn.vuetifyjs.com/images/john.png'"></v-img>
+                    <v-icon v-else size="64">
+                        mdi-account-circle
+                    </v-icon>
                 </v-avatar>
                 <v-textarea v-model="tweetText" placeholder="What's happening?!" auto-grow rows="1"
                     row-height="15"></v-textarea>
@@ -34,7 +37,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
+import { mapActions } from 'vuex';
 export default {
     name: "HomeTweetAdd",
     data() {
@@ -46,6 +49,7 @@ export default {
             isImageMenu: false,
             isTweetAddLoading: false,
             snackbarError: false,
+            tweetImage: null,
         };
     },
     computed: {
@@ -64,11 +68,11 @@ export default {
         async tryAddTweet() {
             this.isTweetAddLoading = true;
             try {
-                const formData = {
-                    text: this.tweetText,
-                    images: this.allImages,
-                };
+                const formData = new FormData()
 
+                formData.append('content', this.tweetText)
+                formData.append('image', this.tweetImage)
+                console.log(formData);
                 await this.addTweet(formData);
 
                 this.isTweetAddLoading = false;
@@ -81,7 +85,9 @@ export default {
                 console.error(err);
             }
         },
-        addImageToAllFilesAndToPreviewURLs() {
+
+        addImageToAllFilesAndToPreviewURLs(payload) {
+            this.tweetImage = payload
             const image = this.image;
             if (!image) return;
 

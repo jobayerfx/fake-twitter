@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helper\Helper;
 use App\Http\Resources\TweetResource;
 use App\Models\Tweet;
+use App\Repositories\AuthRepositoryInterface;
 use App\Repositories\FollowerRepositoryInterface;
 use App\Repositories\TweetRepositoryInterface;
 use Illuminate\Http\Request;
@@ -15,11 +16,13 @@ class TweetController extends Controller
 
     protected $tweetRepository;
     protected $followerRepository;
+    protected $authRepository;
 
-    public function __construct(TweetRepositoryInterface $tweetRepository, FollowerRepositoryInterface $followerRepository)
+    public function __construct(TweetRepositoryInterface $tweetRepository, FollowerRepositoryInterface $followerRepository, AuthRepositoryInterface $authRepository)
     {
         $this->tweetRepository = $tweetRepository;
         $this->followerRepository = $followerRepository;
+        $this->authRepository = $authRepository;
     }
 
     /**
@@ -151,5 +154,14 @@ class TweetController extends Controller
         $tweet = $this->tweetRepository->unlike($userId, $tweetId);
 
         return Helper::response_with_data(TweetResource::make($tweet), false);
+    }
+    public function getTweetsByUser($username) {
+        $user = $this->authRepository->getUserByUsername($username);
+        if (!$user) {
+            return Helper::response([], 'No user found!', false, 404);
+        }
+        $tweetCollection = $this->tweetRepository->getTweetsByUser($user->id);
+
+        return Helper::response(TweetResource::collection($tweetCollection), 'User tweets data.', false, 200);
     }
 }

@@ -1,19 +1,23 @@
 import { AuthApi } from '@/service'
 
 export const state = () => ({
-  account: {}
+  account: {},
+  follower: [],
+  following: []
 })
 
 export const mutations = {
   SET_ACCOUNT(store, data) {
     store.account = data.data
+  },
+  SET_FOLLOWER(store, data) {
+    store.follower = data.data
+  },
+  SET_FOLLOWING(store, data) {
+    store.following = data.data
   }
 }
-export const getters = {
-  currentUser: (state) => {
-    return state.account
-  }
-}
+
 export const actions = {
   // async register({ commit }, formData) {
   //   const { data } = await AuthApi(this.$axios).register(formData)
@@ -36,6 +40,14 @@ export const actions = {
   async updateUser({ commit }, userInfo) {
     const { data } = await AuthApi(this.$axios).updateProfile(userInfo)
     commit('SET_ACCOUNT', data)
+  },
+  async getFollower({ commit }) {
+    const { data } = await AuthApi(this.$axios).getFollowerUsers()
+    commit('SET_FOLLOWER', data)
+  },
+  async getFollowing({ commit }) {
+    const { data } = await AuthApi(this.$axios).getFollowingUsers()
+    commit('SET_FOLLOWING', data)
   }
 
   // async uploadImages({}, images) {
@@ -50,4 +62,15 @@ export const actions = {
 
   //   return allURLs
   // }
+}
+export const getters = {
+  currentUser: (state) => {
+    return state.account
+  },
+  followerUser: (state) => {
+    return state.follower
+  },
+  followingUser: (state) => {
+    return state.following
+  }
 }
