@@ -23,14 +23,15 @@ use App\Http\Controllers\UserController;
 
 Route::post('/auth/register',  [AuthController::class,'register']);
 Route::post('/auth/login', [AuthController::class, 'login']);
-Route::post('/auth/refresh-token',  [AuthController::class, 'refreshToken']);
-Route::post('/auth/logout',  [AuthController::class, 'logout']);
 
 // REST API endpoints
 Route::middleware('auth:api')->group(function() {
+    //Refresh Token Route
+    Route::post('/auth/refresh-token',  [AuthController::class, 'refreshToken']);
+    Route::post('/auth/logout',  [AuthController::class, 'logout']);
     // User details
     Route::get('/me', [AuthController::class, 'me']);
-    Route::put('/profile/update', [AuthController::class, 'updateProfile']);
+    Route::post('/profile/update', [AuthController::class, 'updateProfile']);
     Route::get('/me/following', [AuthController::class, 'following']);
     Route::get('/me/followers', [AuthController::class, 'follows']);
 

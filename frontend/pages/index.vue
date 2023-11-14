@@ -6,7 +6,7 @@
         </v-row>
         <v-footer height="78px">
             <v-row justify="center" no-gutters>
-                <span v-for="link in footerItems" :key="link" variant="text" class="mx-2 text-subtitle-1">
+                <span v-for="link in footerItems" :key="link" variant="text" class="mx-2 text-subtitle-2">
                     {{ link }}
                 </span>
             </v-row>
@@ -20,6 +20,7 @@ import MainPageRightSide from '../components/Base/MainPageRightSide.vue'
 export default {
     components: { MainPageLeftSide, MainPageRightSide },
     layout: 'empty',
+    auth: false,
     data() {
         return {
             footerItems: [

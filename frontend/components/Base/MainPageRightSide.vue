@@ -1,47 +1,47 @@
 <template>
     <v-col cols="12" md="6" class="main-page__right-side">
-        <v-row class="mx-12">
-            <v-col cols="12" md="5" class="hidden-sm-and-down">
-                <v-text-field background-color="#f5f8fa" filled label="Email or username"
-                    v-model="loginInfo.email"></v-text-field>
-            </v-col>
-            <v-col cols="12" md="5" class="hidden-sm-and-down">
-                <v-text-field background-color="#f5f8fa" filled label="Password"
-                    v-model="loginInfo.password"></v-text-field>
-            </v-col>
-            <v-col cols="12" md="2" class="hidden-sm-and-down text-center align-center">
-                <v-btn class="mt-2" rounded outlined color="primary" :loading="isLoading" @click="userLogin()">Login</v-btn>
-            </v-col>
-        </v-row>
 
         <v-row class="mt-8 mx-2" justify="center">
             <v-col cols="12" md="10">
-                <h1 class="mt-4 mb-8 heading-text">Happening now</h1>
-                <h4 class="mt-8 mb-2 sub-heading-text">Join today.</h4>
-                <v-dialog v-model="registerDialog" width="600">
+                <h1 class="mt-4 mb-12 heading-text">Happening now</h1>
+                <h4 class="mt-8 mb-6 sub-heading-text">Join today.</h4>
+                <v-btn rounded outlined width="320" class="text-capitalize py-2 mt-4">
+                    <v-icon left>
+                        mdi-apple
+                    </v-icon>
+                    Sign up with Apple
+                </v-btn>
+                <v-divider class="my-2"></v-divider>
+                <v-dialog v-model="registerDialog" persistent width="600">
                     <template v-slot:activator="{ on, attrs }">
-                        <v-btn color="primary" rounded block v-bind="attrs" class="py-2" v-on="on">
-                            Create account
+                        <v-btn color="primary" rounded width="320" v-bind="attrs" class="py-2 text-capitalize" v-on="on">
+                            Create your account
                         </v-btn>
                     </template>
 
                     <v-card>
-                        <v-card-text>
-                        </v-card-text>
-                        <v-card-title class="text-h5">
-                            Create an account
+                        <v-card-title class="pl-4 d-flex justify-space-between">
+                            <div>
+                                <v-btn class="mr-auto" icon color="black" @click="registerDialog = false">
+                                    <v-icon>mdi-close</v-icon>
+                                </v-btn>
+                                <span class="headline">Sign un to X </span>
+                            </div>
                         </v-card-title>
 
-                        <v-card-text>
-                            <v-form v-model="registerValid">
+                        <v-card-text class="p-8">
+                            <v-spacer></v-spacer>
+                            <v-form v-model="registerValid" class="pa-8">
                                 <v-text-field v-model="userName" filled label="Username" type="text" :rules="userNameRules"
-                                    counter="50" background-color="#f5f8fa"></v-text-field>
+                                    prepend-inner-icon="mdi-at" counter="50" background-color="#f5f8fa"
+                                    outlined></v-text-field>
                                 <v-text-field v-model="registerFullname" filled label="Full name" type="text"
-                                    :rules="registerFullnameRules" counter="100" background-color="#f5f8fa"></v-text-field>
+                                    :rules="registerFullnameRules" counter="100" background-color="#f5f8fa"
+                                    outlined></v-text-field>
                                 <v-text-field v-model="registerEmail" filled label="Email" type="email"
-                                    :rules="registerEmailRules" background-color="#f5f8fa"></v-text-field>
+                                    :rules="registerEmailRules" background-color="#f5f8fa" outlined></v-text-field>
                                 <v-text-field v-model="registerPassword" filled label="Password" type="password"
-                                    :rules="registerPasswordRules" background-color="#f5f8fa"></v-text-field>
+                                    :rules="registerPasswordRules" background-color="#f5f8fa" outlined></v-text-field>
 
                                 <p class="font-weight-bold">Date of birth</p>
                                 <p>
@@ -51,25 +51,58 @@
                                 <v-row>
                                     <v-col cols="12" md="6">
                                         <v-select v-model="registerMonthSelected" :items="registerMonth" filled
-                                            label="Month" background-color="#f5f8fa"
-                                            append-icon="mdi-chevron-down"></v-select>
+                                            label="Month" background-color="#f5f8fa" append-icon="mdi-chevron-down"
+                                            outlined></v-select>
                                     </v-col>
                                     <v-col cols="12" md="3">
                                         <v-select v-model="registerDaySelected" :items="registerDay" filled label="Day"
-                                            background-color="#f5f8fa" append-icon="mdi-chevron-down"></v-select>
+                                            background-color="#f5f8fa" append-icon="mdi-chevron-down" outlined></v-select>
                                     </v-col>
                                     <v-col cols="12" md="3">
                                         <v-select v-model="registerYearSelected" :items="registerYear" filled label="Year"
-                                            background-color="#f5f8fa" append-icon="mdi-chevron-down"></v-select>
+                                            background-color="#f5f8fa" append-icon="mdi-chevron-down" outlined></v-select>
                                     </v-col>
                                 </v-row>
                                 <v-btn color="primary" rounded block :disabled="!registerValid" :loading="isLoading"
-                                    class="ml-auto" @click="tryToRegister">Register</v-btn>
+                                    class="ml-auto text-capitalize" @click="tryToRegister">Register</v-btn>
                             </v-form>
                         </v-card-text>
                     </v-card>
                 </v-dialog>
-                <v-btn class="mt-4" color="primary" rounded outlined block @click="$router.push('/login')">Login</v-btn>
+                <h2 class="mt-8 mb-2">Already have an account?</h2>
+                <v-dialog v-model="loginDialog" persistent width="600">
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-btn color="primary" rounded outlined width="320" v-bind="attrs" class="text-capitalize py-2 mt-4"
+                            v-on="on">
+                            Sign in
+                        </v-btn>
+                    </template>
+
+                    <v-card>
+                        <v-card-title class="pl-4 d-flex justify-space-between">
+                            <div>
+                                <v-btn class="mr-auto" icon color="black" @click="loginDialog = false">
+                                    <v-icon>mdi-close</v-icon>
+                                </v-btn>
+                                <span class="headline">Sign in to X </span>
+                            </div>
+                        </v-card-title>
+
+
+                        <v-card-text>
+                            <v-form>
+                                <v-text-field v-model="loginInfo.email" filled label="Email or username" type="email"
+                                    :rules="emailUsernameRule" background-color="#f5f8fa" outlined></v-text-field>
+                                <v-text-field v-model="loginInfo.password" filled label="Password" type="password"
+                                    :rules="registerPasswordRules" background-color="#f5f8fa" outlined></v-text-field>
+
+                                <v-btn color="primary" rounded block class="ml-auto text-capitalize" :loading="isLoading"
+                                    @click="userLogin()">Login</v-btn>
+                            </v-form>
+                        </v-card-text>
+                    </v-card>
+                </v-dialog>
+
             </v-col>
         </v-row>
         <BaseVSnackbar :is-visible="snackbarError" />
@@ -78,6 +111,7 @@
 
 <script>
 import { mapActions } from 'vuex';
+import { AuthApi } from '@/service'
 export default {
     name: "MainPageRightSide",
     data() {
@@ -90,6 +124,7 @@ export default {
             registerValid: false,
             isLoading: false,
             snackbarError: false,
+            emailUsernameRule: [(v) => !!v || 'Email or Username is required'],
             userNameRules: [
                 (v) => !!v || 'Username is required',
                 (v) => v.length <= 50 || '',
@@ -284,36 +319,47 @@ export default {
                 email: '',
                 password: ''
             },
+            loginDialog: false,
             isLoggedIn: false
         };
     },
     methods: {
         ...mapActions({
-            register: 'register',
+            // register: 'account/register',
+            login: 'account/login',
         }),
+
         async tryToRegister() {
             try {
                 this.isLoading = true;
-                const birthdayString =
+                let birthdayString =
                     this.registerDaySelected +
                     ' ' +
                     this.registerMonthSelected +
-                    ' ' +
+                    ' ,' +
                     this.registerYearSelected;
+                // console.log(new Date(birthdayString));
+                birthdayString = this.getFormatedDate(birthdayString);
                 const formData = {
                     username: this.userName,
                     name: this.registerFullname,
                     email: this.registerEmail,
                     password: this.registerPassword,
-                    birthday: birthdayString,
+                    password_confirmation: this.registerPassword,
+                    dob: birthdayString,
                 };
-                await this.register(formData);
+                // const { data } = await this.register(formData);
+                const { data } = await AuthApi(this.$axios).register(formData)
                 this.registerDialog = false;
-                this.$router.push('/login');
+                this.loginDialog = true;
+                this.$toast.success(data.message);
+
             } catch (err) {
-                this.snackbarError = true;
+                this.$toast.error(err.response.data.message);
                 this.isLoading = false;
                 console.error(err);
+            } finally {
+                this.isLoading = false
             }
         },
         async userLogin() {
@@ -331,7 +377,7 @@ export default {
                 // }
             } catch (err) {
                 console.log(err.response.data.message);
-                // this.$toast.error(err.response.data.message)
+                this.$toast.error(err.response.data.message)
             } finally {
                 this.isLoading = false
             }

@@ -9,8 +9,11 @@
                         mdi-account-circle
                     </v-icon>
                 </v-avatar>
-                <v-textarea v-model="tweetText" placeholder="What's happening?!" auto-grow rows="1"
+                <v-textarea solo v-model="tweetText" placeholder="What's happening?!" elevation="0" auto-grow rows="1"
                     row-height="15"></v-textarea>
+            </v-row>
+            <v-row align="center">
+                <v-divider class="my-2 mx-2"></v-divider>
             </v-row>
             <v-row align="center">
                 <v-file-input v-model="image" color="primary" class="home-tweet-add__avatar-margin" hide-input dense
@@ -72,12 +75,12 @@ export default {
 
                 formData.append('content', this.tweetText)
                 formData.append('image', this.tweetImage)
-                console.log(formData);
+                // console.log(formData);
                 await this.addTweet(formData);
-
                 this.isTweetAddLoading = false;
+                this.tweetImage = null;
                 this.tweetText = '';
-                this.allImages = null;
+                this.allImages = [];
                 this.previewURLs = [];
             } catch (err) {
                 this.isTweetAddLoading = false;

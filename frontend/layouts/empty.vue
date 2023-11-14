@@ -7,6 +7,7 @@
 export default {
     // eslint-disable-next-line vue/component-definition-name-casing
     name: 'empty',
-    // middleware: ['isAuth'],
+    middleware: ['isNoAuth'],
+    auth: false,
 }
 </script>

@@ -1,6 +1,8 @@
 <template>
-    <v-text-field v-model="searchText" filled rounded prepend-inner-icon="mdi-magnify" placeholder="Search people ..."
-        background-color="#e6ecf0"></v-text-field>
+    <form>
+        <v-text-field v-model="searchText" filled rounded prepend-inner-icon="mdi-magnify" placeholder="Search ..."
+            background-color="#e6ecf0" v-on:keydown.enter.prevent="doSearch"></v-text-field>
+    </form>
 </template>
 
 <script lang="ts">
@@ -12,5 +14,11 @@ export default Vue.extend({
             searchText: '',
         };
     },
+    methods: {
+        doSearch() {
+            if (this.searchText)
+                this.$router.push(`/search?q=${this.searchText}`);
+        }
+    }
 });
 </script>

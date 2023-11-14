@@ -68,7 +68,7 @@ class TweetController extends Controller
         $data['user_id'] = $request->user()->id;
         $tweet = $this->tweetRepository->createTweet($data);
 
-        return Helper::response($tweet, 'Tweet added successfully', false, 201);
+        return Helper::response(TweetResource::make($tweet), 'Tweet added successfully', false, 201);
     }
 
     /**

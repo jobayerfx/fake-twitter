@@ -1,16 +1,19 @@
 <template>
     <v-container>
-        <v-card plain>
+        <div v-if="!isLoaded">
+            <BaseVProgressCircular />
+        </div>
+        <v-card plain elevation="0">
             <v-tabs color="deep-purple-accent-4" align-tabs="center">
                 <v-tab class="text-capitalize">Followers</v-tab>
                 <v-tab class="text-capitalize">Followings</v-tab>
 
                 <v-tab-item>
-                    <TabFollowUserList :user-list="followerList" @follow="follow" @unfollow="unfollow"
+                    <UserCardList :user-list="followerList" @follow="follow" @unfollow="unfollow"
                         @initialize="initialize" />
                 </v-tab-item>
                 <v-tab-item>
-                    <TabFollowUserList :user-list="followingList" @follow="follow" @unfollow="unfollow"
+                    <UserCardList :user-list="followingList" @follow="follow" @unfollow="unfollow"
                         @initialize="initialize" />
                 </v-tab-item>
             </v-tabs>
@@ -18,11 +21,10 @@
     </v-container>
 </template>
 <script>
-
-import TabFollowUserList from '../../components/Profile/TabFollowUserList.vue';
+import UserCardList from '../../components/Common/UserCardList.vue';
 import { FollowApi } from '@/service'
 export default {
-    components: { TabFollowUserList },
+    components: { UserCardList },
     middleware: ['isAuth'],
     data() {
         return {
@@ -30,9 +32,11 @@ export default {
             tab: null,
             followerList: [],
             followingList: [],
+            isLoaded: false,
         };
     },
     mounted() {
+        this.isLoaded = true;
         this.initialize();
     },
     methods: {

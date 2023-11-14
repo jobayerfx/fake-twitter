@@ -13,5 +13,8 @@ export default (axios) => ({
   },
   unlikeTweet: (id) => {
     return axios.delete('/tweets/' + id + '/unlike')
+  },
+  getUserTweets: (username) => {
+    return axios.get(`/user-tweets/${username}`)
   }
 })

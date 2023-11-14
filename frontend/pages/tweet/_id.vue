@@ -37,8 +37,7 @@
                 </v-list-item-content>
             </v-list-item>
             <v-container fluid>
-                <HomeTweetActions :comments="tweet.commentsQuantity" :likes="tweet.likesQuantity"
-                    :retweets="tweet.retweetsQuantity" @like="switchLike" />
+                <HomeTweetActions :comments="0" :likes="tweet.total_likes" :retweets="0" @like="switchLike" />
             </v-container>
         </div>
         <BaseVSnackbar :is-visible="snackbarError" />
@@ -62,11 +61,13 @@ export default Vue.extend({
         const tweet = this.$store.state.tweets.tweetDetails;
         this.tweet = tweet;
     },
-
     computed: {
         tweetId() {
             return this.$route.params.id;
         },
+    },
+    mounted() {
+        this.loaded = true;
     },
     methods: {
         ...mapActions({
@@ -85,9 +86,7 @@ export default Vue.extend({
             }
         },
     },
-    mounted() {
-        this.loaded = true;
-    },
+
 });
 </script>
 

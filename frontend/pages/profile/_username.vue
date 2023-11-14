@@ -86,12 +86,27 @@
 
 
             <v-tabs v-model="selectedTab" background-color="transparent" color="primary" grow>
+                <v-tab class="text-capitalize">
+                    My Tweets
+                </v-tab>
                 <v-tab v-for="tab in tabs" :key="tab" class="text-capitalize">
                     {{ tab }}
                 </v-tab>
             </v-tabs>
 
             <v-tabs-items v-model="selectedTab">
+                <v-tab-item>
+                    <v-card flat>
+                        <v-list flat>
+                            <v-list-item-group>
+                                <div v-for="tweet in userTweets" :key="tweet.id">
+                                    <LazyHomeTweet :tweet="tweet" @like="trySwitchLike" @open="openTweet"
+                                        @initialize="initialize" />
+                                </div>
+                            </v-list-item-group>
+                        </v-list>
+                    </v-card>
+                </v-tab-item>
                 <v-tab-item v-for="tab in tabs" :key="tab">
                     <v-card flat>
                         <v-card-text class="text-capitalize">{{ tab }}</v-card-text>
@@ -108,13 +123,17 @@ import { mapActions, mapGetters } from 'vuex';
 import { FollowApi } from '@/service'
 // eslint-disable-next-line max-len
 import ProfileChangeDialog from '../../components/Profile/ProfileChangeDialog.vue';
+import BaseVProgressCircular from '../../components/Base/BaseVProgressCircular.vue';
+import LazyHomeTweet from '../../components/Home/HomeTweet.vue';
 export default {
-    components: { ProfileChangeDialog },
+    components: { ProfileChangeDialog, BaseVProgressCircular, LazyHomeTweet },
     middleware: ['isAuth'],
     data() {
         return {
             accountInfo: {},
-            tabs: ['Posts', 'Replies', 'Media', 'Likes'],
+            follower: [],
+            following: [],
+            tabs: ['Replies', 'Media', 'Likes'],
             selectedTab: null,
             snackbarError: false,
             isLoaded: false,
@@ -125,8 +144,9 @@ export default {
     computed: {
         ...mapGetters({
             accountStore: 'account/currentUser',
-            follower: 'account/followerUser',
-            following: 'account/followingUser',
+            meFollower: 'account/followerUser',
+            meFollowing: 'account/followingUser',
+            userTweets: 'tweets/userTweets',
         }),
         isEmptyWebsite() {
             return this.accountInfo.website === '';
@@ -161,7 +181,10 @@ export default {
             getProfile: 'account/getProfileByUsername',
             updateUser: 'account/updateUser',
             getFollower: 'account/getFollower',
-            getFollowing: 'account/getFollowing'
+            getFollowing: 'account/getFollowing',
+            fetchUserTweets: 'tweets/fetchTweetsByUsername',
+            switchLikeOnServer: 'tweets/switchLike',
+            fetchStoreTweetDetailsById: 'tweets/fetchStoreTweetDetailsById',
         }),
         async fetch() {
             // this.profileUsername = this.$route.params.username;
@@ -171,18 +194,25 @@ export default {
                     // eslint-disable-next-line max-len
                     const userInfo = await this.getProfile(this.profileUsername);
                     this.accountInfo = userInfo;
+                    const { data } = await FollowApi(this.$axios).getFollowingData(this.profileUsername);
+                    this.follower = data.data.followers;
+                    this.following = data.data.followings;
                 } else {
                     this.getMe();
                     this.accountInfo = this.accountStore;
+                    this.follower = this.meFollower;
+                    this.following = this.meFollowings;
                 }
+                this.fetchUserTweets(this.profileUsername);
             } catch (err) {
                 this.snackbarError = true;
                 console.error(err);
             }
         },
-        async tryUpdateUser(data) {
+        async tryUpdateUser(fd) {
             try {
-                await this.updateUser(data);
+                const { data } = await this.updateUser(fd);
+                this.$toast.success('Profile updated successfully.');
                 this.fetch();
             } catch (e) {
                 console.error(e);
@@ -230,9 +260,30 @@ export default {
             }
         },
         isFollowed() {
-            const index = this.following.findIndex((item) => item.username == this.profileUsername)
+            const index = this.meFollowing.findIndex((item) => item.username == this.profileUsername)
             return index === -1
-        }
+        },
+        async trySwitchLike(id, action) {
+            try {
+                const data = {
+                    id,
+                    action,
+                };
+                await this.switchLikeOnServer(data);
+            } catch (err) {
+                this.snackbarError = true;
+                console.error(err);
+            }
+        },
+        async openTweet(id) {
+            try {
+                await this.fetchStoreTweetDetailsById(id);
+                return this.$router.push('/tweet/' + id);
+            } catch (err) {
+                this.snackbarError = true;
+                console.error(err);
+            }
+        },
     },
 
 };

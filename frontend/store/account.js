@@ -19,24 +19,23 @@ export const mutations = {
 }
 
 export const actions = {
-  // async register({ commit }, formData) {
-  //   const { data } = await AuthApi(this.$axios).register(formData)
-  //   commit('SET_ACCOUNT', data)
-  // },
-  // async login({ commit }, formData) {
-  //   const { data } = await AuthApi(this.$axios).login(formData)
-  //   commit('SET_ACCOUNT', data)
-  // },
+  async register({ commit }, formData) {
+    const { data } = await AuthApi(this.$axios).register(formData)
+    // commit('SET_ACCOUNT', data)
+    return data
+  },
+  async login({ commit }, formData) {
+    const { data } = await AuthApi(this.$axios).login(formData)
+    commit('SET_ACCOUNT', data)
+  },
   async getme({ commit }) {
     const { data } = await AuthApi(this.$axios).getme()
     commit('SET_ACCOUNT', data)
   },
-
   async getProfileByUsername({ commit }, username) {
     const { data } = await AuthApi(this.$axios).getProfile(username)
     return data.data
   },
-
   async updateUser({ commit }, userInfo) {
     const { data } = await AuthApi(this.$axios).updateProfile(userInfo)
     commit('SET_ACCOUNT', data)

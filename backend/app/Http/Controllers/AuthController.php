@@ -82,7 +82,7 @@ class AuthController extends Controller
             return Helper::response(null,'Something went wrong', true, 401);
         }
         $newToken = $this->authRepository->refreshToken($request);
-        return response()->json(['token' => $newToken], 200);
+        return response()->json(['refresh_token' => $newToken], 200);
     }
     public function updateProfile(Request $request)
     {

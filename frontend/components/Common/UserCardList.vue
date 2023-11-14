@@ -3,17 +3,21 @@
         <v-list>
             <v-list-item-group>
                 <v-list-item v-for="user in userList" :key="user.username">
-                    <v-list-item-avatar>
-                        <v-img v-if="user.profile_photo" :src="user.profile_photo"></v-img>
-                        <v-icon v-else size="56">
-                            mdi-account-circle
-                        </v-icon>
-                    </v-list-item-avatar>
+                    <NuxtLink :to="`/profile/${user.username}`" style="text-decoration: none; color: inherit;">
+                        <v-list-item-avatar>
+                            <v-img v-if="user.profile_photo" :src="user.profile_photo"></v-img>
+                            <v-icon v-else size="56">
+                                mdi-account-circle
+                            </v-icon>
+                        </v-list-item-avatar>
+                    </NuxtLink>
                     <v-list-item-content>
                         <v-list-item-title class="font-weight-bold">
-                            {{ user.name }}
+                            <NuxtLink :to="`/profile/${user.username}`" style="text-decoration: none; color: inherit;">{{
+                                user.name }}</NuxtLink>
                         </v-list-item-title>
                         <v-list-item-subtitle> @{{ user.username }} </v-list-item-subtitle>
+                        <v-list-item-subtitle> {{ user.bio }} </v-list-item-subtitle>
                     </v-list-item-content>
                     <v-list-item-action>
                         <v-btn v-if="isFollowed(user.id)" rounded @click="follow(user.id)"
@@ -29,7 +33,7 @@
 <script>
 import { mapGetters } from 'vuex';
 export default {
-    name: 'TabFollowUserList',
+    name: 'UserCardList',
     props: {
         userList: {
             type: Array
@@ -66,8 +70,6 @@ export default {
         isFollowed(id) {
             // if (this.following.lenght === 0) return false;
             const index = this.following.findIndex((item) => item.id === id)
-            // console.log(index !== -1);
-            // return true
             return index === -1
         }
     }

@@ -12,7 +12,7 @@
         <div v-if="loaded">
             <HomeTweetAdd />
 
-            <div class="big-divider"></div>
+            <!-- <div class="big-divider"></div> -->
 
             <v-list flat>
                 <v-list-item-group>

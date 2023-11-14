@@ -78,8 +78,13 @@ export default {
         },
         endpoints: {
           login: { url: '/auth/login', method: 'post' },
+          refresh: { url: '/auth/refresh-token', method: 'post' },
           logout: { url: '/auth/logout', method: 'post' },
           user: { url: '/me', method: 'get' }
+        },
+        refreshToken: {
+          property: 'refresh_token',
+          maxAge: 60 * 60 * 24 * 30 // 30 days
         }
       }
     }

@@ -18,13 +18,13 @@ class TweetRepository implements TweetRepositoryInterface
     }
     public function getTweetsForUser($userId, $followedUserIds)
     {
-        return Tweet::with('user')->whereIn('user_id', array_merge($followedUserIds, [$userId]))
+        return Tweet::with('user')->whereIn('user_id', array_merge($followedUserIds, [$userId]))->orderBy('created_at', 'desc')
             ->cursorPaginate();
     }
 
     public function getTweetsByUser($userId)
     {
-        return Tweet::with('user')->where('user_id', $userId)->cursorPaginate();
+        return Tweet::with('user')->where('user_id', $userId)->orderBy('created_at', 'desc')->cursorPaginate();
     }
 
     public function createTweet($data)
@@ -33,7 +33,9 @@ class TweetRepository implements TweetRepositoryInterface
             $imagePath = $data['image']->store('tweet_images', 'public');
             $data['image'] = $imagePath;
         }
-        return Tweet::create($data);
+        $tweet = Tweet::create($data);
+        $tweetWithUser = Tweet::with('user')->find($tweet->id);
+        return $tweetWithUser;
     }
 
     public function deleteTweet($tweetId)

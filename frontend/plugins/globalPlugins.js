@@ -21,6 +21,19 @@ Vue.mixin({
       const momentDate = momentTimezone(date)
       return momentDate.tz('Asia/Dhaka').format('Y-m-d H:i:s')
     },
+    getFormatedDate(date) {
+      // const momentDate = momentTimezone(date)
+      // return momentDate.tz('Asia/Dhaka').format(format)
+      const d = new Date(date)
+      let month = '' + (d.getMonth() + 1)
+      let day = '' + d.getDate()
+      const year = d.getFullYear()
+
+      if (month.length < 2) month = '0' + month
+      if (day.length < 2) day = '0' + day
+
+      return [year, month, day].join('-')
+    },
     formatDate(date) {
       const momentDate = momentTimezone(date)
       return momentDate.tz('Asia/Dhaka').format('MMMM y')

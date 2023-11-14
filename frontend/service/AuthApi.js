@@ -12,7 +12,7 @@ export default (axios) => ({
     return axios.post('/auth/logout')
   },
   updateProfile: (payload) => {
-    return axios.put('/profile/update', payload)
+    return axios.post('/profile/update', payload)
   },
   getFollowingUsers: () => {
     return axios.get('/me/following')

@@ -35,7 +35,7 @@ class AuthRepository implements AuthRepositoryInterface
     public function refreshToken($request)
     {
         $user = $request->user();
-
+// dd($user);
         $userTokens = $user->tokens;
 
         foreach ($userTokens as $token) {

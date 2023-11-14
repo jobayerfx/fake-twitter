@@ -52,7 +52,7 @@
                         </v-card-title>
 
                         <v-card-text>
-                            <v-textarea v-model="editText" label="Твит" auto-grow rows="1" row-height="15"></v-textarea>
+                            <v-textarea v-model="editText" label="content" auto-grow rows="1" row-height="15"></v-textarea>
                             <v-row>
                                 <span class="ml-auto">
                                     <span v-if="editText" class="mr-1 text-caption">
@@ -160,12 +160,12 @@ export default Vue.extend({
         async tryDeleteTweet() {
             this.isLoading = true;
             try {
-                await this.deleteTweet(this.tweet._id);
+                await this.deleteTweet(this.tweet.id);
                 this.isLoading = false;
                 this.deleteDialog = false;
             } catch (err) {
                 this.isLoading = false;
-                this.snackbarError = true;
+                this.$toast.error(err.response.data.message)
                 this.deleteDialog = false;
                 console.error(err);
             }
@@ -174,16 +174,16 @@ export default Vue.extend({
             this.isLoading = true;
             try {
                 const data = {
-                    text: this.editText,
-                    id: this.tweet._id,
+                    content: this.editText,
+                    id: this.tweet.id,
                 };
                 await this.updateTweet(data);
-                this.$emit('update-tweet-text', data.text);
+                this.$emit('update-tweet-text', data.content);
                 this.isLoading = false;
                 this.editDialog = false;
             } catch (err) {
                 this.isLoading = false;
-                this.snackbarError = true;
+                this.$toast.error(err.response.data.message)
                 console.error(err);
             }
         },
