@@ -14,21 +14,17 @@
                 </v-list-item-avatar>
                 <v-list-item-content>
                     <v-list-item-title class="font-weight-bold">
-                        {{ tweet.user.name }}
+                        {{ tweet.user?.name }}
                     </v-list-item-title>
                     <v-list-item-subtitle>
-                        @{{ tweet.user.username }}
+                        @{{ tweet.user?.username }}
                     </v-list-item-subtitle>
                 </v-list-item-content>
             </v-list-item>
             <div class="tweet-details__text">
                 {{ tweet.content }}
             </div>
-            <v-card v-for="imageURL in tweet.imagesURLs" :key="imageURL" class="my-2">
-                <v-card-text>
-                    <v-img :src="imageURL"></v-img>
-                </v-card-text>
-            </v-card>
+            <v-card v-if="tweet.image" :img="tweetImage" height="256" class="my-2"></v-card>
             <v-list-item class="pl-0">
                 <v-list-item-content class="pt-2">
                     <v-list-item-subtitle>
@@ -46,7 +42,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapState, mapActions } from 'vuex';
+import { mapActions } from 'vuex';
 
 export default Vue.extend({
     middleware: ['isAuth'],
@@ -55,6 +51,7 @@ export default Vue.extend({
             loaded: false,
             snackbarError: false,
             tweet: {},
+            tweetImage: '',
         };
     },
     fetch() {
@@ -68,6 +65,7 @@ export default Vue.extend({
     },
     mounted() {
         this.loaded = true;
+        this.tweetImage = this.tweet.image
     },
     methods: {
         ...mapActions({

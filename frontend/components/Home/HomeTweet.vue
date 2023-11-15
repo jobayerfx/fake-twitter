@@ -1,5 +1,5 @@
 <template>
-    <v-list-item class="home-tweet" v-ripple="{ class: 'secondaryLightGray--text' }" @click="openTweet(tweet._id)">
+    <v-list-item class="home-tweet" v-ripple="{ class: 'secondaryLightGray--text' }" @click="openTweet(tweet.id)">
         <v-container fluid>
             <v-row>
                 <v-list-item-avatar class="mb-auto" size="64">

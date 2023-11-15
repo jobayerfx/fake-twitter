@@ -30,7 +30,7 @@
             <v-col cols="12">
                 <v-card plain elevation="0">
 
-                    <UserCardList :user-list="searchList" @follow="follow" @unfollow="unfollow" @initialize="initialize" />
+                    <UserCardList :user-list="searchList" @follow="follow" @unfollow="unfollow" @initialize="reset" />
 
                 </v-card>
             </v-col>
@@ -39,9 +39,10 @@
     </v-container>
 </template>
 <script>
+import { mapActions, mapGetters } from 'vuex';
 import UserCardList from '../components/Common/UserCardList.vue';
 import BaseVProgressCircular from '../components/Base/BaseVProgressCircular.vue';
-import { AuthApi, FollowApi } from '@/service'
+import { FollowApi } from '@/service'
 export default {
     components: { UserCardList, BaseVProgressCircular },
     // middleware: ['isAuth'],
@@ -50,17 +51,20 @@ export default {
             isLoaded: false,
             loading: false,
             tab: null,
-            searchList: [],
+            // searchList: [],
         };
     },
     computed: {
+        ...mapGetters({
+            searchList: 'account/searchData',
+        }),
         q() {
             return this.$route.query.q;
         }
     },
     watch: {
         $route(nv, ov) {
-            this.initialize(nv.query.q);
+            this.doSearch({ search: nv.query.q });
         },
     },
     mounted() {
@@ -68,12 +72,19 @@ export default {
         this.initialize(this.q);
     },
     methods: {
+        ...mapActions({
+            doSearch: 'account/fetchSearchData',
+            doFollow: 'account/doFollow',
+            doUnfollow: 'account/doUnfollow',
+        }),
+        reset() { },
         async initialize(query) {
             try {
                 this.loading = true
                 const q = { search: query };
-                const { data } = await AuthApi(this.$axios).searchUser(q);
-                this.searchList = data.data;
+                await Promise.all([
+                    this.$store.dispatch('account/fetchSearchData', q),
+                ])
             } catch (e) {
                 // this.$toast.error(e.response.data.message)
             } finally {
@@ -83,10 +94,10 @@ export default {
         async follow(id) {
             try {
                 this.loading = true
-                // eslint-disable-next-line max-len
-                const { data } = await FollowApi(this.$axios).follow(id)
-                this.initialize()
-                this.$toast.success(data.message);
+                // const { data } = await FollowApi(this.$axios).follow(id)
+                // this.initialize()
+                const { data } = await this.doFollow(id)
+                this.$toast.success('Followed successfully');
             } catch (e) {
                 this.$toast.error(e.response.data.message)
             } finally {
@@ -96,9 +107,10 @@ export default {
         async unfollow(id) {
             try {
                 this.loading = true
-                const { data } = await FollowApi(this.$axios).unfollow(id)
-                this.initialize()
-                this.$toast.success(data.message);
+                // const { data } = await FollowApi(this.$axios).unfollow(id)
+                // this.initialize()
+                const { data } = await this.doUnfollow(id)
+                this.$toast.success('Unfollowed successfully');
             } catch (e) {
                 this.$toast.error(e.response.data.message)
             } finally {

@@ -18,9 +18,11 @@ class UserController extends Controller
     }
 
     public function search(Request $request) {
-        $search = preg_replace('/[+\-*><()~"@]/', '', trim(request('search')));
+        $search = trim(request('search'));
+        $search = (filter_var($search, FILTER_VALIDATE_EMAIL)) ? Helper::trimEmail($search) : $search;
+        $search = preg_replace('/[+\-*><()~"@]/', '', $search);
         $search = htmlspecialchars($search, ENT_QUOTES, 'UTF-8');
-
+        
         if(!$search) {
             return Helper::response([], 'No user data found!', false, 404);
         }
@@ -41,4 +43,5 @@ class UserController extends Controller
 
         return Helper::response(UserResource::make($user), 'User data', false, 200);
     }
+    
 }

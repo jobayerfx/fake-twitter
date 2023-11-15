@@ -1,20 +1,30 @@
-import { AuthApi } from '@/service'
+import { AuthApi, FollowApi } from '@/service'
 
 export const state = () => ({
   account: {},
   follower: [],
-  following: []
+  following: [],
+  searchUsers: []
 })
 
 export const mutations = {
   SET_ACCOUNT(store, data) {
     store.account = data.data
   },
+  SET_SEARCH_DATA(store, data) {
+    store.searchUsers = data.data
+  },
   SET_FOLLOWER(store, data) {
     store.follower = data.data
   },
   SET_FOLLOWING(store, data) {
     store.following = data.data
+  },
+  ADD_FOLLOWING(state, data) {
+    state.following.unshift(data.data)
+  },
+  REMOVE_FOLLOWING(state, id) {
+    state.following = state.following.filter((user) => user.id !== id)
   }
 }
 
@@ -40,6 +50,10 @@ export const actions = {
     const { data } = await AuthApi(this.$axios).updateProfile(userInfo)
     commit('SET_ACCOUNT', data)
   },
+  async fetchSearchData({ commit }, q) {
+    const { data } = await AuthApi(this.$axios).searchUser(q)
+    commit('SET_SEARCH_DATA', data)
+  },
   async getFollower({ commit }) {
     const { data } = await AuthApi(this.$axios).getFollowerUsers()
     commit('SET_FOLLOWER', data)
@@ -47,24 +61,24 @@ export const actions = {
   async getFollowing({ commit }) {
     const { data } = await AuthApi(this.$axios).getFollowingUsers()
     commit('SET_FOLLOWING', data)
+  },
+  async doFollow({ commit }, id) {
+    const { data } = await FollowApi(this.$axios).follow(id)
+    commit('ADD_FOLLOWING', data)
+    return data
+  },
+  async doUnfollow({ commit }, id) {
+    const { data } = await FollowApi(this.$axios).unfollow(id)
+    commit('REMOVE_FOLLOWING', id)
+    return data
   }
-
-  // async uploadImages({}, images) {
-  //   const allURLs = []
-
-  //   for (const image of images) {
-  //     const fd = new FormData()
-  //     fd.append('image', image)
-  //     const imageInfo = await this.$axios.$post('/upload', fd)
-  //     allURLs.push(imageInfo.url)
-  //   }
-
-  //   return allURLs
-  // }
 }
 export const getters = {
   currentUser: (state) => {
     return state.account
+  },
+  searchData: (state) => {
+    return state.searchUsers
   },
   followerUser: (state) => {
     return state.follower

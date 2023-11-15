@@ -16,22 +16,24 @@ class FollowerRepository implements FollowerRepositoryInterface
     }
     public function follow($followerId, $followedId)
     {
-        if (!$this->isUserExists($followedId)) {
+        $user = $this->isUserExists($followedId);
+        if (!$user) {
             return null; // User not found
         }
         if ($this->isFollowing($followerId, $followedId)) {
             return false; // Already following
         }
-        return Following::create([
+        Following::create([
             'follower_id' => $followerId,
             'followed_id' => $followedId,
         ]);
+        return $user;
     }
 
     public function unfollow($followerId, $followedId)
     {
-        // Check if the user with $followedId exists
-        if (!$this->isUserExists($followedId)) {
+        $user = $this->isUserExists($followedId);
+        if (!$user) {
             return null; // User not found
         }
 
@@ -43,7 +45,7 @@ class FollowerRepository implements FollowerRepositoryInterface
         Following::where('follower_id', $followerId)
             ->where('followed_id', $followedId)
             ->delete();
-        return true;
+        return $user;
     }
 
     public function isUserExists($userId)

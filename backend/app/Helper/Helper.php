@@ -55,5 +55,10 @@ class Helper
             $code
         );
     }
+    public static function trimEmail($email) 
+    {
+        $emailParts = explode('@', $email);
+        return $emailParts[0];
+    }
 
 }

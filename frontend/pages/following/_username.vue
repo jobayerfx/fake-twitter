@@ -48,7 +48,7 @@ export default {
                 this.followerList = data.data.followers;
                 this.followingList = data.data.followings;
             } catch (e) {
-                this.$toast.error(e.response.data.message)
+                // this.$toast.error(e.response.data.message)
             } finally {
                 this.loading = false
             }

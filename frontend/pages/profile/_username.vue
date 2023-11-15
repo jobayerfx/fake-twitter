@@ -59,9 +59,9 @@
                             {{ formatDate(accountInfo.created_at) }}
                         </span>
 
-                        <span v-if="isEmptyWebsite" class="ml-2">
+                        <span v-if="!isEmptyWebsite" class="ml-2">
                             <v-icon>mdi-web</v-icon>
-                            <a href="#">
+                            <a :href="accountInfo.website" target="_blank">
                                 {{ accountInfo.website }}
                             </a>
                         </span>
@@ -71,12 +71,14 @@
             <v-row>
                 <v-col class="pt-0">
                     <div class="subtitle-1">
-                        <span class="ml-4 text--white">
-                            <NuxtLink :to="`/following/${accountInfo.username}`"><strong>{{ following.length }}</strong>
+                        <span class="ml-4">
+                            <NuxtLink :to="`/following/${accountInfo.username}`" class="following-style"><strong>{{
+                                following.length }}</strong>
                                 Following</NuxtLink>
                         </span>
-                        <span class="ml-2 white--text">
-                            <NuxtLink :to="`/following/${accountInfo.username}`"><strong>{{ follower.length }}</strong>
+                        <span class="ml-2 following-style">
+                            <NuxtLink :to="`/following/${accountInfo.username}`" class="following-style"><strong>{{
+                                follower.length }}</strong>
                                 Follower</NuxtLink>
                         </span>
                     </div>
@@ -97,7 +99,7 @@
             <v-tabs-items v-model="selectedTab">
                 <v-tab-item>
                     <v-card flat>
-                        <v-list flat>
+                        <v-list v-if="userTweets.length" flat>
                             <v-list-item-group>
                                 <div v-for="tweet in userTweets" :key="tweet.id">
                                     <LazyHomeTweet :tweet="tweet" @like="trySwitchLike" @open="openTweet"
@@ -105,6 +107,7 @@
                                 </div>
                             </v-list-item-group>
                         </v-list>
+                        <v-card-text v-else class="text-capitalize font-weight-bold">No tweets found!</v-card-text>
                     </v-card>
                 </v-tab-item>
                 <v-tab-item v-for="tab in tabs" :key="tab">
@@ -182,6 +185,8 @@ export default {
             updateUser: 'account/updateUser',
             getFollower: 'account/getFollower',
             getFollowing: 'account/getFollowing',
+            doFollow: 'account/doFollow',
+            doUnfollow: 'account/doUnfollow',
             fetchUserTweets: 'tweets/fetchTweetsByUsername',
             switchLikeOnServer: 'tweets/switchLike',
             fetchStoreTweetDetailsById: 'tweets/fetchStoreTweetDetailsById',
@@ -211,9 +216,9 @@ export default {
         },
         async tryUpdateUser(fd) {
             try {
-                const { data } = await this.updateUser(fd);
+                await this.updateUser(fd);
                 this.$toast.success('Profile updated successfully.');
-                this.fetch();
+                // this.fetch();
             } catch (e) {
                 console.error(e);
                 this.snackbarError = true;
@@ -237,9 +242,9 @@ export default {
             try {
                 this.loading = true
                 // eslint-disable-next-line max-len
-                const { data } = await FollowApi(this.$axios).follow(this.accountInfo.id)
-                this.initialize()
-                this.$toast.success(data.message);
+                const { data } = await this.doFollow(this.accountInfo.id)
+                // this.initialize()
+                // this.$toast.success(data.message);
             } catch (e) {
                 this.$toast.error(e.response.data.message)
             } finally {
@@ -250,9 +255,9 @@ export default {
             try {
                 this.loading = true
                 // eslint-disable-next-line max-len
-                const { data } = await FollowApi(this.$axios).unfollow(this.accountInfo.id)
-                this.initialize()
-                this.$toast.success(data.message);
+                const { data } = await this.doUnfollow(this.accountInfo.id)
+                // this.initialize()
+                // this.$toast.success(data.message);
             } catch (e) {
                 this.$toast.error(e.response.data.message)
             } finally {
@@ -293,5 +298,14 @@ export default {
     position: absolute;
     left: 0%;
     top: 70%
+}
+
+.following-style {
+    text-decoration: none;
+    color: inherit;
+}
+
+.following-style:hover {
+    text-decoration: underline;
 }
 </style>

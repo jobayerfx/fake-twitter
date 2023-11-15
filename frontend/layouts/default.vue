@@ -60,6 +60,9 @@ export default {
                 case 'profile-username': {
                     return 'Profile';
                 }
+                case 'search': {
+                    return 'Search';
+                }
                 default: {
                     return 'Tweet';
                 }

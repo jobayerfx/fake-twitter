@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helper\Helper;
+use App\Http\Resources\UserResource;
 use App\Repositories\FollowerRepositoryInterface;
 use Illuminate\Http\Request;
 
@@ -31,7 +32,7 @@ class FollowerController extends Controller
             return Helper::response("", "User is already being followed", true, 400);
         }
 
-        return Helper::response("", "Followed successfully", false, 200);
+        return Helper::response(UserResource::make($result), "Followed successfully", false, 200);
     }
 
     public function unfollowUser($followedId)
@@ -49,6 +50,6 @@ class FollowerController extends Controller
             return Helper::response([], "User is not being followed", true, 400);
         }
 
-        return Helper::response("", "Unfollowed successfully", false, 200);
+        return Helper::response(UserResource::make($result), "Unfollowed successfully", false, 200);
     }
 }
