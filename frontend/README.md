@@ -1,5 +1,12 @@
 # fake-twitter
 
+# Installation
+
+1. Run `https://github.com/jobayerfx/fake-twitter.git` to clone the repository
+2. RUN `cd /frontend`
+3. RUN `cp .env.example .env` to copy .env file
+4. Set up the environment variables in `.env` file.
+
 ## Build Setup
 
 ```bash
